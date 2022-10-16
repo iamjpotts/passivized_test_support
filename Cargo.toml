@@ -9,6 +9,11 @@ license = "MPL-2.0"
 name = "passivized_test_support"
 repository = "https://github.com/iamjpotts/passivized_test_support"
 rust-version = "1.64"
-version = "0.0.1"
+version = "0.0.2"
 
 [dependencies]
+log = "0.4"
+simple_logger = { version = "2.3", default-features = false, features = ["timestamps", "threads"] }
+
+[dev-dependencies]
+tokio = { version = "1.21", features = ["macros", "rt-multi-thread"] }
