@@ -28,12 +28,12 @@ jobs:
   test-mac:
     name: Cargo test on Mac
     strategy:
+      # Only have one combination, because the Mac setup is too flaky
       matrix:
         os:
           - macOS-latest
         toolchain:
           - 1.64
-          - stable
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3

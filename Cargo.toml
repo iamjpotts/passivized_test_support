@@ -1,6 +1,6 @@
 [package]
 authors = ["Joshua Potts <8704475+iamjpotts@users.noreply.github.com>"]
-description = "Placeholder"
+description = "Miscellaneous items used to test other crates. Not a general purpose testing crate."
 edition = "2021"
 include = [ 
     "**/*.rs",
@@ -9,11 +9,20 @@ license = "MPL-2.0"
 name = "passivized_test_support"
 repository = "https://github.com/iamjpotts/passivized_test_support"
 rust-version = "1.64"
-version = "0.0.3"
+version = "0.0.4"
 
 [dependencies]
+backoff = { version = "0.4", features = ["futures", "tokio"] }
+http = "0.2"
+hyper = { version = "0.14", features = ["client", "http1", "http2"] }
+hyper-tls = "0.5"
 log = "0.4"
+native-tls = "0.2"
+serial_test = "0.9"
 simple_logger = { version = "2.3", default-features = false, features = ["timestamps", "threads"] }
+thiserror = "1.0"
+tokio = { version = "1.21", features = ["net", "time"] }
 
 [dev-dependencies]
+mockito = "0.31"
 tokio = { version = "1.21", features = ["macros", "rt-multi-thread"] }
