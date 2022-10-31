@@ -19,7 +19,7 @@ hyper-tls = "0.5"
 log = "0.4"
 native-tls = "0.2"
 serial_test = "0.9"
-simple_logger = { version = "3.0", default-features = false, features = ["timestamps", "threads"] }
+simple_logger = { version = "4.0", default-features = false, features = ["timestamps", "threads"] }
 thiserror = "1.0"
 tokio = { version = "1.21", features = ["net", "time"] }
 
