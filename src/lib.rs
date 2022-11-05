@@ -6,6 +6,7 @@ pub mod http_errors;
 pub mod http_status_tests;
 pub mod logging;
 pub mod retry;
+pub mod timestamps;
 pub mod waiter;
 
 pub(crate) mod imp;
