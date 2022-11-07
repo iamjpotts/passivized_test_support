@@ -2,7 +2,7 @@ use core::future::Future;
 use std::fmt::Debug;
 use std::process::ExitCode;
 
-use log::{info, warn};
+use log::{info, LevelFilter, warn};
 
 /// An implementation of the main() function of an example app.
 ///
@@ -32,6 +32,28 @@ where
 {
     super::logging::enable();
 
+    run_impl(implementation).await
+}
+
+/// Same as run(), but with a custom log level
+pub async fn run_with_level<E, F, Fut>(implementation: F, log_level: LevelFilter) -> ExitCode
+where
+    E: Debug,
+    F: FnOnce() -> Fut,
+    Fut: Future<Output = Result<(), E>>
+{
+    super::logging::enable_with_level(log_level);
+
+    run_impl(implementation).await
+}
+
+/// Same as run(), but does NOT configure a logger.
+pub async fn run_impl<E, F, Fut>(implementation: F) -> ExitCode
+where
+    E: Debug,
+    F: FnOnce() -> Fut,
+    Fut: Future<Output = Result<(), E>>
+{
     info!("Hello, world.");
 
     match implementation().await {
