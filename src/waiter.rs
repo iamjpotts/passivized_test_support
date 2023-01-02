@@ -1,11 +1,10 @@
 use std::borrow::Borrow;
 use std::time::Duration;
-use backoff::backoff::Constant;
+use backoff::backoff::{Backoff, Constant};
 use backoff::future::retry_notify;
 use log::{info, warn};
 use native_tls::TlsConnector;
 use tokio::net::TcpStream;
-use tokio::time::sleep;
 
 use crate::http_errors::HttpError;
 use crate::http_status_tests::StatusTest;
@@ -31,16 +30,24 @@ where
     U: Borrow<str>,
     T: StatusTest + Copy,
 {
+    let interval = Duration::from_secs(2);
+    let backoff = Limit::new(7, Constant::new(interval));
+
+    wait_for_http_server_with_backoff(url, status_test, backoff).await
+}
+
+pub async fn wait_for_http_server_with_backoff<U, T, B>(url: U, status_test: T, backoff: B) -> Result<String, HttpError>
+where
+    U: Borrow<str>,
+    T: StatusTest + Copy,
+    B: Backoff
+{
     let borrowed = url.borrow();
 
     info!("Will wait until can connect to {}", borrowed);
 
-    let interval = Duration::from_secs(2);
-
-    sleep(interval).await;
-
     retry_notify(
-        Limit::new(7, Constant::new(interval)),
+        backoff,
         || async {
             super::http::get_text_http_with(borrowed, status_test)
                 .await
@@ -71,16 +78,24 @@ where
     U: Borrow<str>,
     T: StatusTest + Copy
 {
+    let interval = Duration::from_secs(2);
+    let backoff = Limit::new(5, Constant::new(interval));
+
+    wait_for_https_server_with_backoff(url, tls, status_test, backoff).await
+}
+
+pub async fn wait_for_https_server_with_backoff<U, T, B>(url: U, tls: TlsConnector, status_test: T, backoff: B) -> Result<String, HttpError>
+where
+    U: Borrow<str>,
+    T: StatusTest + Copy,
+    B: Backoff
+{
     let borrowed = url.borrow();
 
     info!("Will wait until can connect to {}", borrowed);
 
-    let interval = Duration::from_secs(2);
-
-    sleep(interval).await;
-
     retry_notify(
-        Limit::new(5, Constant::new(interval)),
+        backoff,
         || async {
             super::http::get_text_https_with(borrowed, tls.clone(), status_test)
                 .await
@@ -100,11 +115,14 @@ pub async fn connect_tcp_server(host: &str, port: u16) -> Result<(), std::io::Er
 
 pub async fn wait_for_tcp_server(host: &str, port: u16) -> Result<(), std::io::Error> {
     let interval = Duration::from_secs(2);
+    let backoff = Limit::new(4, Constant::new(interval));
 
-    sleep(interval).await;
+    wait_for_tcp_server_with_backoff(host, port, backoff).await
+}
 
+pub async fn wait_for_tcp_server_with_backoff<B: Backoff>(host: &str, port: u16, backoff: B) -> Result<(), std::io::Error> {
     retry_notify(
-        Limit::new(4, Constant::new(interval)),
+        backoff,
         || async {
             connect_tcp_server(host, port)
                 .await
