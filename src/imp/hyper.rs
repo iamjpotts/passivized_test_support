@@ -72,19 +72,15 @@ impl HyperHttp {
 #[cfg(test)]
 mod test_get_text_from_http {
     use http::StatusCode;
-    use serial_test::serial;
     use super::HyperHttp;
     use crate::http_errors::HttpError;
     use crate::http_status_tests::is_success;
 
     #[tokio::test]
-    #[serial]
     async fn fails_when_server_error() {
-        mockito::reset();
+        let server = mockito::Server::new_async().await;
 
-        let server = mockito::server_url();
-
-        let actual = HyperHttp{}.get_text_http(&format!("{}/qux", server), &is_success())
+        let actual = HyperHttp{}.get_text_http(&format!("{}/qux", server.url()), &is_success())
             .await
             .unwrap_err();
 
@@ -97,10 +93,7 @@ mod test_get_text_from_http {
     }
 
     #[tokio::test]
-    #[serial]
     async fn fails_when_server_not_present() {
-        mockito::reset();
-
         let server = "http://127.0.0.200:1234";
 
         HyperHttp{}.get_text_http(&format!("{}/foo", server), &is_success())
@@ -109,17 +102,15 @@ mod test_get_text_from_http {
     }
 
     #[tokio::test]
-    #[serial]
     async fn gets() {
-        mockito::reset();
+        let mut server = mockito::Server::new_async().await;
 
-        let server = mockito::server_url();
-
-        let _m = mockito::mock("GET", "/foo")
+        server.mock("GET", "/foo")
             .with_body("bar")
-            .create();
+            .create_async()
+            .await;
 
-        let actual = HyperHttp{}.get_text_http(&format!("{}/foo", server), &is_success())
+        let actual = HyperHttp{}.get_text_http(&format!("{}/foo", server.url()), &is_success())
             .await
             .unwrap();
 

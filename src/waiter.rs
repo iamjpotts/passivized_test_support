@@ -135,23 +135,20 @@ pub async fn wait_for_tcp_server_with_backoff<B: Backoff>(host: &str, port: u16,
 #[cfg(test)]
 mod test_wait_for_http_server {
     use http::StatusCode;
-    use serial_test::serial;
     use crate::http_status_tests::{equals, is_success};
     use crate::waiter::wait_for_http_server;
 
     #[tokio::test]
-    #[serial]
     async fn waits_for_expected_failure() {
-        mockito::reset();
+        let mut server = mockito::Server::new_async().await;
 
-        let server = mockito::server_url();
-
-        let _m = mockito::mock("GET", "/abc")
+        server.mock("GET", "/abc")
             .with_status(404)
             .with_body("xyz")
-            .create();
+            .create_async()
+            .await;
 
-        let actual = wait_for_http_server(format!("{}/abc", server), equals(StatusCode::NOT_FOUND))
+        let actual = wait_for_http_server(format!("{}/abc", server.url()), equals(StatusCode::NOT_FOUND))
             .await
             .unwrap();
 
@@ -159,17 +156,15 @@ mod test_wait_for_http_server {
     }
 
     #[tokio::test]
-    #[serial]
     async fn waits_for_success() {
-        mockito::reset();
+        let mut server = mockito::Server::new_async().await;
 
-        let server = mockito::server_url();
-
-        let _m = mockito::mock("GET", "/fizz")
+        server.mock("GET", "/fizz")
             .with_body("buzz")
-            .create();
+            .create_async()
+            .await;
 
-        let actual = wait_for_http_server(format!("{}/fizz", server), is_success())
+        let actual = wait_for_http_server(format!("{}/fizz", server.url()), is_success())
             .await
             .unwrap();
 
