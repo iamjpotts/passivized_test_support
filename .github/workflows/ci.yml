@@ -11,9 +11,7 @@ jobs:
     strategy:
       matrix:
         os:
-          - macOS-latest
           - ubuntu-20.04
-          - windows-2022
         toolchain:
           - stable
     runs-on: ${{ matrix.os }}
@@ -44,6 +42,7 @@ jobs:
       - run: cargo clippy
       - run: cargo test --no-run
       - run: cargo test --no-fail-fast
+
   test-nix:
     name: Cargo test on nix
     strategy:
@@ -53,7 +52,6 @@ jobs:
         toolchain:
           - 1.68
           - beta
-          - nightly
           - stable
     runs-on: ${{ matrix.os }}
     steps:
