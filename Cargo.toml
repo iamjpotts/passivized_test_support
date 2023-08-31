@@ -21,8 +21,8 @@ native-tls = "0.2"
 simple_logger = { version = "4.0", default-features = false, features = ["timestamps", "threads"] }
 time = "0.3"
 thiserror = "1.0"
-tokio = { version = "1.26", features = ["net"] }
+tokio = { version = "1.32", features = ["net"] }
 
 [dev-dependencies]
 mockito = "1.0"
-tokio = { version = "1.26", features = ["macros", "rt-multi-thread"] }
+tokio = { version = "1.32", features = ["macros", "rt-multi-thread"] }
