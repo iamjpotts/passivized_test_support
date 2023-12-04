@@ -15,7 +15,7 @@ version = "0.0.11-alpha"
 backoff = { version = "0.4", features = ["futures", "tokio"] }
 http = "0.2"
 hyper = { version = "0.14", features = ["client", "http1", "http2"] }
-hyper-tls = "0.5"
+hyper-tls = "0.6"
 log = "0.4"
 native-tls = "0.2"
 simple_logger = { version = "4.0", default-features = false, features = ["timestamps", "threads"] }
