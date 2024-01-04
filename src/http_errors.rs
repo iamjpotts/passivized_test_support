@@ -34,3 +34,9 @@ impl From<hyper::Error> for HttpError {
         Self::Other(Box::new(other))
     }
 }
+
+impl From<hyper_util::client::legacy::Error> for HttpError {
+    fn from(other: hyper_util::client::legacy::Error) -> Self {
+        Self::Other(Box::new(other))
+    }
+}
