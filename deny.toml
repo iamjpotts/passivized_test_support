@@ -26,10 +26,15 @@ deny = [
     # License is non-trivial
     { name = "ring" },
 ]
-multiple-versions = "warn"
+multiple-versions = "deny"
 skip = []
-skip-tree = []
-wildcards = "warn"
+skip-tree = [
+    # Mockito 1.2 uses the older version of hyper
+    { name = "hyper", version = "0.14.28" },
+    # Mockito 1.2 and Tokio 1.35 use this old version
+    { name = "windows-sys", version = "0.48.0" },
+]
+wildcards = "deny"
 
 [sources]
 allow-git = []
