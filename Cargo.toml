@@ -9,7 +9,7 @@ license = "MPL-2.0"
 name = "passivized_test_support"
 repository = "https://github.com/iamjpotts/passivized_test_support"
 rust-version = "1.70"
-version = "0.0.11"
+version = "0.0.12-alpha"
 
 [dependencies]
 backoff = { version = "0.4", features = ["futures", "tokio"] }
