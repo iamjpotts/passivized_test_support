@@ -6,6 +6,21 @@ on:
     branches: [master]
 
 jobs:
+  check-minimal-versions:
+    name: Check build using minimal versions
+    strategy:
+      matrix:
+        os:
+          - ubuntu-20.04
+        toolchain:
+          - "1.70"
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: rustup toolchain install nightly
+      - run: cargo +nightly generate-lockfile -Z minimal-versions
+      - run: cargo build --all-features
+
   deny:
     name: Cargo deny
     strategy:
@@ -16,7 +31,7 @@ jobs:
           - stable
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: ${{ matrix.toolchain }}
@@ -35,7 +50,7 @@ jobs:
           - "1.70"
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: clippy
@@ -57,7 +72,7 @@ jobs:
           - stable
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: clippy
@@ -79,10 +94,12 @@ jobs:
           - stable
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: ${{ matrix.toolchain }}
+      - run: vcpkg install openssl:x64-windows-static-md
+      - run: vcpkg integrate install
       - run: cargo test --no-run
       - run: cargo test --no-fail-fast
     timeout-minutes: 30
